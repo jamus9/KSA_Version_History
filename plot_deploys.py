@@ -42,6 +42,42 @@ def extract_deploy_times(path: Path) -> list[dt.datetime]:
     return unique_times
 
 
+def add_annotation(
+    ax: plt.Axes,
+    times: list[dt.datetime],
+    y: list[int],
+    annotation_date: dt.datetime,
+    title: str,
+    xytext: tuple[float, float],
+) -> None:
+    """Add an annotation to a specific deployment in the plot.
+    
+    Args:
+        ax: The matplotlib axes to annotate.
+        times: List of deployment timestamps.
+        y: List of deployment indices.
+        annotation_date: The timestamp of the deployment to annotate.
+        title: The annotation text.
+        xytext: Offset from the data point in points (x, y).
+    """
+    if annotation_date in times:
+        idx = times.index(annotation_date)
+        time = times[idx]
+        y_val = y[idx]
+        
+        ax.annotate(
+            title,
+            xy=(time, y_val),
+            xytext=xytext,
+            textcoords="offset points",
+            ha="left",
+            fontsize=10,
+            color="green",
+            bbox=dict(boxstyle="round,pad=0.3", facecolor="white", edgecolor="green", alpha=0.8),
+            arrowprops=dict(arrowstyle="->", color="green", lw=1.5),
+        )
+
+
 def main() -> None:
     # Locate history.txt next to this script.
     history_path = Path(__file__).with_name("history.txt")
@@ -75,6 +111,16 @@ def main() -> None:
     ax.set_xlabel("Date")
     ax.set_ylabel("Deployment Index")
     ax.grid(True, alpha=0.3)
+
+    # Example annotation: mark an important deployment
+    annotation_date = dt.datetime.strptime("10.12.2025 05:15", "%d.%m.%Y %H:%M")
+    add_annotation(ax, times, y, annotation_date, "Ground Clutter", (0, -100))
+
+    annotation_date = dt.datetime.strptime("30.01.2026 02:50", "%d.%m.%Y %H:%M")
+    add_annotation(ax, times, y, annotation_date, "Planetary Rings", (-50, -100))
+
+    annotation_date = dt.datetime.strptime("12.11.2025 14:44", "%d.%m.%Y %H:%M")
+    add_annotation(ax, times, y, annotation_date, "Kittens", (0, -50))
 
     # Use concise date labels that adapt to the time span.
     locator = mdates.AutoDateLocator()
