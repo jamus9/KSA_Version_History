@@ -64,11 +64,12 @@ def main() -> None:
     ax.text(
         0.02,
         0.98,
-        f"Fit: {slope:.2f} deploys/day",
+        f"Linear Fit: {slope:.2f} deploys/day",
         transform=ax.transAxes,
         ha="left",
         va="top",
         color="red",
+        fontsize=12,
     )
     ax.set_title("KSA Deployments Over Time")
     ax.set_xlabel("Date")
